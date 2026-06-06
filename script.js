@@ -1,43 +1,164 @@
-const channelID = "SEU_CHANNEL_ID";
-const writeAPIKey = "SUA_WRITE_API_KEY";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 
-async function atualizarDados() {
+import {
+    getDatabase,
+    ref,
+    set,
+    onValue
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-database.js";
 
-    const url = `https://api.thingspeak.com/channels/3401252/feeds.json?results=2`;
+const firebaseConfig = {
+  apiKey: "AIzaSyBqmTTuImI3XryQ9D2X-eJ1yNrFfKtwvpM",
+  authDomain: "cleangrow-8b552.firebaseapp.com",
+  databaseURL: "https://cleangrow-8b552-default-rtdb.firebaseio.com",
+  projectId: "cleangrow-8b552",
+  storageBucket: "cleangrow-8b552.firebasestorage.app",
+  messagingSenderId: "823736787199",
+  appId: "1:823736787199:web:26c85a9bf702422e186cca"
+};
 
-    const resposta = await fetch(url);
-    const dados = await resposta.json();
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-    const feed = dados.feeds[0];
+// =======================
+// Função para atualizar textos
+// =======================
 
-    document.getElementById("temp").innerText =
-        feed.field1 + " °C";
+function monitorar(caminho, elementoId, sufixo = "") {
 
-    document.getElementById("umid").innerText =
-        feed.field2 + " %";
+    const elemento = document.getElementById(elementoId);
 
-    document.getElementById("nivel").innerText =
-        feed.field3 + " %";
+    if (!elemento) return;
+
+    onValue(ref(db, caminho), (snapshot) => {
+
+        const valor = snapshot.val();
+
+        elemento.textContent =
+            valor !== null
+            ? valor + sufixo
+            : "--";
+
+    });
 }
 
-async function ligar() {
+// =======================
+// Ambiente
+// =======================
 
-    await fetch(
-        `https://api.thingspeak.com/update?api_key=${writeAPIKey}&field4=1`
-    );
+monitorar("amb_temp", "amb_temp", "°C");
+monitorar("amb_umid", "amb_umid", "%");
 
-    alert("Bomba ligada!");
+onValue(ref(db, "amb_chuva"), (snapshot) => {
+
+    const el = document.getElementById("amb_chuva");
+
+    if (!el) return;
+
+    el.textContent =
+        snapshot.val() == 1
+        ? "🌧 Chovendo"
+        : "☀ Sem chuva";
+});
+
+// =======================
+// Composteira
+// =======================
+
+monitorar("comp_temp", "comp_temp", "°C");
+monitorar("comp_umid", "comp_umid", "%");
+monitorar("comp_gas", "comp_gas");
+
+// =======================
+// Minhocário
+// =======================
+
+monitorar("minh_temp", "minh_temp", "°C");
+monitorar("minh_umid", "minh_umid", "%");
+monitorar("minh_gas", "minh_gas");
+
+// =======================
+// Reservatório
+// =======================
+
+onValue(ref(db, "res_nivel"), (snapshot) => {
+
+    const nivel = snapshot.val() || 0;
+
+    const texto =
+        document.getElementById("res_nivel");
+
+    const barra =
+        document.getElementById("nivelBar");
+
+    if (texto)
+        texto.textContent = nivel + "%";
+
+    if (barra)
+        barra.style.width = nivel + "%";
+});
+
+// =======================
+// Sistema
+// =======================
+
+onValue(ref(db, "stat_irrig"), (snapshot) => {
+
+    const el =
+        document.getElementById("stat_irrig");
+
+    if (!el) return;
+
+    el.textContent =
+        snapshot.val() == 1
+        ? "🟢 Ligada"
+        : "🔴 Desligada";
+});
+
+onValue(ref(db, "stat_valv"), (snapshot) => {
+
+    const el =
+        document.getElementById("stat_valv");
+
+    if (!el) return;
+
+    el.textContent =
+        snapshot.val() == 1
+        ? "🟢 Aberta"
+        : "🔴 Fechada";
+});
+
+// =======================
+// Botão Irrigar Agora
+// =======================
+
+const btn =
+    document.getElementById("btnIrrigar");
+
+if (btn) {
+
+    let estadoAtual = 0;
+
+    const irrigRef =
+        ref(db, "res_irrig");
+
+    onValue(irrigRef, (snapshot) => {
+
+        estadoAtual =
+            snapshot.val() || 0;
+
+        btn.textContent =
+            estadoAtual == 1
+            ? "🛑 Parar Irrigação"
+            : "💧 Irrigar Agora";
+    });
+
+    btn.addEventListener("click", () => {
+
+        set(
+            irrigRef,
+            estadoAtual == 1 ? 0 : 1
+        );
+
+    });
 }
-
-async function desligar() {
-
-    await fetch(
-        `https://api.thingspeak.com/update?api_key=${writeAPIKey}&field4=0`
-    );
-
-    alert("Bomba desligada!");
-}
-
-atualizarDados();
-
-setInterval(atualizarDados, 10000);

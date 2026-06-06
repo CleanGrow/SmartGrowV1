@@ -2,62 +2,128 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:Arial, sans-serif;
 }
 
 body{
-    background:#f4f4f4;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-height:100vh;
+    font-family:'Segoe UI',sans-serif;
+    background:#f4f7f5;
+    padding:20px;
 }
 
-.container{
-    width:90%;
-    max-width:900px;
-}
-
-h1{
+header{
     text-align:center;
-    margin-bottom:20px;
-    color:#2e7d32;
+    margin-bottom:30px;
+}
+
+header h1{
+    color:#2E7D32;
+    font-size:40px;
+}
+
+header p{
+    color:#666;
+}
+
+.menu-card{
+    display:block;
+    text-decoration:none;
+    color:#333;
+
+    background:#fff;
+
+    padding:25px;
+
+    margin-bottom:15px;
+
+    border-radius:18px;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+
+    transition:.3s;
+}
+
+.menu-card:hover{
+    transform:translateY(-4px);
 }
 
 .card{
-    background:white;
+    background:#fff;
+
     padding:20px;
-    margin:10px 0;
-    border-radius:15px;
-    box-shadow:0 4px 10px rgba(0,0,0,0.1);
-    text-align:center;
+
+    margin-bottom:15px;
+
+    border-radius:18px;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
 }
 
 .card h2{
+    color:#2E7D32;
     margin-bottom:10px;
 }
 
-.card p{
-    font-size:24px;
+.valor{
+    font-size:32px;
     font-weight:bold;
-    color:#1565c0;
+    color:#2E7D32;
 }
 
-button{
-    padding:12px 20px;
+.voltar{
+    display:inline-block;
+
+    margin-top:20px;
+
+    text-decoration:none;
+
+    background:#2E7D32;
+
+    color:white;
+
+    padding:10px 20px;
+
+    border-radius:12px;
+}
+
+.barra{
+    width:100%;
+    height:30px;
+
+    background:#ddd;
+
+    border-radius:20px;
+
+    overflow:hidden;
+}
+
+#nivelBar{
+    height:100%;
+
+    width:0%;
+
+    background:#2196F3;
+
+    transition:.5s;
+}
+
+.botao{
+    width:100%;
+
+    padding:15px;
+
     border:none;
-    border-radius:10px;
-    cursor:pointer;
-    margin:5px;
+
+    border-radius:15px;
+
+    background:#2E7D32;
+
+    color:white;
+
     font-size:16px;
+
+    cursor:pointer;
 }
 
-button:first-child{
-    background:#4caf50;
-    color:white;
-}
-
-button:last-child{
-    background:#f44336;
-    color:white;
+.botao:hover{
+    background:#256728;
 }
