@@ -132,32 +132,43 @@ onValue(ref(db, "stat_valv"), (snapshot) => {
 // Botão Irrigar Agora
 // =======================
 
-const btn = document.getElementById("btnIrrigar");
+document.addEventListener("DOMContentLoaded", () => {
 
-let contador = null;
+    const btn = document.getElementById("btnIrrigar");
 
-onValue(ref(db, "stat_irrig"), (snapshot) => {
-    const irrigando = snapshot.val() == 1;
-
-    if (irrigando) {
-
-        btn.disabled = true;
-        btn.textContent = "Irrigando...";
-
-        // garante que não sobra intervalo antigo
-        if (contador) {
-            clearInterval(contador);
-            contador = null;
-        }
-
-    } else {
-
-        btn.disabled = false;
-        btn.textContent = "Irrigar Agora";
-
-        if (contador) {
-            clearInterval(contador);
-            contador = null;
-        }
+    if (!btn) {
+        console.log("Botão não encontrado!");
+        return;
     }
+
+    let contador = null;
+
+    onValue(ref(db, "stat_irrig"), (snapshot) => {
+
+        const irrigando = snapshot.val() == 1;
+
+        console.log("stat_irrig:", snapshot.val());
+
+        if (irrigando) {
+
+            btn.disabled = true;
+            btn.textContent = "Irrigando...";
+
+            if (contador) {
+                clearInterval(contador);
+                contador = null;
+            }
+
+        } else {
+
+            btn.disabled = false;
+            btn.textContent = "Irrigar Agora";
+
+            if (contador) {
+                clearInterval(contador);
+                contador = null;
+            }
+        }
+    });
+
 });
