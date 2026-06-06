@@ -136,39 +136,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const btn = document.getElementById("btnIrrigar");
 
-    if (!btn) {
-        console.log("Botão não encontrado!");
-        return;
-    }
+   let contador = null;
+let tempo = 300;
 
-    let contador = null;
+onValue(ref(db, "stat_irrig"), (snapshot) => {
+    const irrigando = snapshot.val() == 1;
 
-    onValue(ref(db, "stat_irrig"), (snapshot) => {
+    if (irrigando) {
 
-        const irrigando = snapshot.val() == 1;
+        btn.disabled = true;
 
-        console.log("stat_irrig:", snapshot.val());
+        // evita múltiplos intervalos
+        if (contador) clearInterval(contador);
 
-        if (irrigando) {
+        tempo = 300;
+        btn.textContent = `${tempo}s`;
 
-            btn.disabled = true;
-            btn.textContent = "Irrigando...";
+        contador = setInterval(() => {
+            tempo--;
 
-            if (contador) {
+            btn.textContent = `${tempo}s`;
+
+            if (tempo <= 0) {
                 clearInterval(contador);
                 contador = null;
             }
+        }, 1000);
 
-        } else {
+    } else {
 
-            btn.disabled = false;
-            btn.textContent = "Irrigar Agora";
+        btn.disabled = false;
+        btn.textContent = "Irrigar Agora";
 
-            if (contador) {
-                clearInterval(contador);
-                contador = null;
-            }
+        if (contador) {
+            clearInterval(contador);
+            contador = null;
         }
-    });
-
+    }
 });
