@@ -138,12 +138,37 @@ if (btn) {
 
     btn.addEventListener("click", async () => {
 
-        await set(
-            ref(db, "cmd_irrig"),
-            1
+        const confirmar = confirm(
+            "Tem certeza que deseja iniciar a irrigação?"
         );
 
-        alert("Irrigação iniciada!");
+        if (!confirmar) return;
+
+        await set(ref(db, "cmd_irrig"), 1);
+
+        btn.disabled = true;
+
+        let tempo = 300; // 5 minutos
+
+        btn.textContent = `${tempo}s`;
+
+        const contador = setInterval(() => {
+
+            tempo--;
+
+            btn.textContent = `${tempo}s`;
+
+            if (tempo <= 0) {
+
+                clearInterval(contador);
+
+                btn.disabled = false;
+
+                btn.textContent = "Irrigar Agora";
+            }
+
+        }, 1000);
+
     });
 
 }
