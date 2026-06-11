@@ -20,10 +20,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// =======================
-// Função para atualizar textos
-// =======================
-
 function monitorar(caminho, elementoId, sufixo = "") {
 
     const elemento = document.getElementById(elementoId);
@@ -42,10 +38,6 @@ function monitorar(caminho, elementoId, sufixo = "") {
     });
 }
 
-// =======================
-// Ambiente
-// =======================
-
 monitorar("amb_temp", "amb_temp", "°C");
 monitorar("amb_umid", "amb_umid", "%");
 
@@ -61,25 +53,13 @@ onValue(ref(db, "amb_chuva"), (snapshot) => {
         : "☀ Sem chuva";
 });
 
-// =======================
-// Composteira
-// =======================
-
 monitorar("comp_temp", "comp_temp", "°C");
 monitorar("comp_umid", "comp_umid", "%");
 monitorar("comp_gas", "comp_gas");
 
-// =======================
-// Minhocário
-// =======================
-
 monitorar("minh_temp", "minh_temp", "°C");
 monitorar("minh_umid", "minh_umid", "%");
 monitorar("minh_gas", "minh_gas");
-
-// =======================
-// Reservatório
-// =======================
 
 onValue(ref(db, "res_nivel"), (snapshot) => {
 
@@ -97,10 +77,6 @@ onValue(ref(db, "res_nivel"), (snapshot) => {
     if (barra)
         barra.style.width = nivel + "%";
 });
-
-// =======================
-// Sistema
-// =======================
 
 onValue(ref(db, "stat_irrig"), (snapshot) => {
 
@@ -128,17 +104,12 @@ onValue(ref(db, "stat_valv"), (snapshot) => {
         : "🔴 Fechada";
 });
 
-// =======================
-// BOTÃO IRRIGAR
-// =======================
-
 const btn = document.getElementById("btnIrrigar");
 
 if (!btn) {
     console.log("Botão não encontrado!");
 } else {
 
-    // 🔴 ESCUTA ESTADO REAL
     onValue(ref(db, "stat_irrig"), (snapshot) => {
 
         const irrigando = Number(snapshot.val()) === 1;
@@ -157,7 +128,6 @@ if (!btn) {
         }
     });
 
-    // 🔵 CLIQUE ENVIA COMANDO PARA FIREBASE
     btn.addEventListener("click", async () => {
 
         console.log("Botão clicado");
